@@ -18,7 +18,7 @@
     let
       name = "adventofcode-rust";
     in
-      utils.lib.eachDefaultSystem
+      utils.lib.eachSystem [ "x86_64-linux" ]
         (system:
           let
             pkgs = import nixpkgs {
@@ -26,8 +26,8 @@
               overlays = [
                 fenix.overlay
                 (self: super: {
-                  rustc = self.fenix.stable.minimalToolchain;
-                  cargo = self.fenix.stable.minimalToolchain;
+                  rustc = self.fenix.complete.toolchain;
+                  cargo = self.fenix.complete.toolchain;
                 })
               ];
             };
@@ -63,10 +63,10 @@
               devShell = pkgs.mkShell
                 {
                   nativeBuildInputs = [
-                    pkgs.fenix.stable.toolchain
+                    pkgs.fenix.complete.toolchain
                     pkgs.rust-analyzer
                   ];
-                  RUST_SRC_PATH = "${pkgs.fenix.stable.rust-src}/bin/rust-lib/src";
+                  RUST_SRC_PATH = "${pkgs.fenix.complete.rust-src}/bin/rust-lib/src";
                 };
             }
         );
