@@ -12,8 +12,14 @@ fn main() -> Result<()> {
     let day = args.get(2).unwrap();
     match (year.as_str(), day.as_str()) {
         ("2021", "day01") => {
-            let result = year2021::day01a(utils::read_lines_as_i32_vector("input/day01.txt")?);
-            println!("Year 2021, Day 01, Part 1: {}", result);
+            println!(
+                "Year 2021, Day 01, Part 1: {}",
+                year2021::day01a(utils::read_lines_as_i32_vector("input/day01.txt")?)
+            );
+            println!(
+                "Year 2021, Day 01, Part 2: {}",
+                year2021::day01b(utils::read_lines_as_i32_vector("input/day01.txt")?)
+            );
         }
         (_, _) => println!("Unknown input"),
     }
