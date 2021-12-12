@@ -21,6 +21,12 @@ fn main() -> Result<()> {
                 year2021::day01b(utils::read_lines_as_i32_vector("input/day01.txt")?)
             );
         }
+        ("2021", "day02") => {
+            println!(
+                "Year 2021, Day 02, Part 1: {}",
+                year2021::day02a(utils::read_lines_as_str_vector("input/day02.txt")?)
+            );
+        }
         (_, _) => println!("Unknown input"),
     }
     Ok(())
