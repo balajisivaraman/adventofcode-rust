@@ -8,6 +8,8 @@ enum Command {
 struct Coordinate {
     horizontal_position: i32,
     depth: i32,
+    aim: i32,
+    improved_command_processor: bool,
 }
 
 impl Coordinate {
@@ -20,16 +22,33 @@ impl Coordinate {
         }
     }
 
+    fn with_improved_command_processor(&mut self, fixed_command_processor: bool) {
+        self.improved_command_processor = fixed_command_processor;
+    }
+
     fn forward(&mut self, by: i32) {
-        self.horizontal_position += by
+        if self.improved_command_processor {
+            self.horizontal_position += by;
+            self.depth += self.aim * by;
+        } else {
+            self.horizontal_position += by;
+        }
     }
 
     fn up(&mut self, by: i32) {
-        self.depth -= by
+        if self.improved_command_processor {
+            self.aim -= by;
+        } else {
+            self.depth -= by;
+        }
     }
 
     fn down(&mut self, by: i32) {
-        self.depth += by
+        if self.improved_command_processor {
+            self.aim += by;
+        } else {
+            self.depth += by;
+        }
     }
 }
 
@@ -52,6 +71,14 @@ pub fn day02a(input: Vec<String>) -> i32 {
     coordinate.horizontal_position * coordinate.depth
 }
 
+pub fn day02b(input: Vec<String>) -> i32 {
+    let commands: Vec<Command> = input.into_iter().map(parse_command).collect();
+    let mut coordinate = Coordinate::default();
+    coordinate.with_improved_command_processor(true);
+    commands.into_iter().for_each(|c| coordinate.run_command(c));
+    coordinate.horizontal_position * coordinate.depth
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,6 +95,21 @@ mod tests {
                 String::from("forward 2")
             )),
             150
+        );
+    }
+
+    #[test]
+    fn day02b_test() {
+        assert_eq!(
+            day02b(vec!(
+                String::from("forward 5"),
+                String::from("down 5"),
+                String::from("forward 8"),
+                String::from("up 3"),
+                String::from("down 8"),
+                String::from("forward 2")
+            )),
+            900
         );
     }
 }
