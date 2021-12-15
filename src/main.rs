@@ -1,5 +1,6 @@
 #![feature(iter_advance_by)]
 #![feature(concat_idents)]
+#![feature(option_get_or_insert_default)]
 
 use anyhow::Result;
 use paste::paste;
@@ -18,6 +19,9 @@ fn main() -> Result<()> {
         }
         ("2021", "day02") => {
             advent_run!(2021, 2, utils::read_lines_as_str_vector);
+        }
+        ("2021", "day03") => {
+            advent_run!(2021, 3, utils::read_lines_as_str_vector);
         }
         (_, _) => println!("Unknown input"),
     }
