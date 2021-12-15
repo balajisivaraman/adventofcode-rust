@@ -1,7 +1,5 @@
 use std::collections::BTreeMap;
 
-use itertools::Itertools;
-
 #[derive(Debug, Default)]
 struct BitCount {
     zeros: u32,
@@ -40,6 +38,16 @@ struct BitMap {
 }
 
 impl BitMap {
+    fn generate(input: &Vec<String>) -> BitMap {
+        input.iter().fold(BitMap::default(), |mut acc, line| {
+            line.chars().enumerate().for_each(|(i, c)| {
+                let bit_count = acc.get_or_default(i);
+                bit_count.update_count(c);
+            });
+            acc
+        })
+    }
+
     fn get_or_default(&mut self, index: usize) -> &mut BitCount {
         if !self.internal.contains_key(&index) {
             self.internal.insert(index, BitCount::default());
@@ -47,36 +55,46 @@ impl BitMap {
         self.internal.get_mut(&index).unwrap()
     }
 
-    fn gamma_rate(&self) -> i32 {
-        let most_common_bits: String = self
-            .internal
+    fn get_most_common_bits(&self) -> String {
+        self.internal
             .keys()
             .into_iter()
             .map(|k| self.internal.get(k).unwrap().most_common_bit())
-            .collect();
-        i32::from_str_radix(most_common_bits.as_str(), 2).unwrap()
+            .collect()
     }
 
-    fn epsilon_rate(&self) -> i32 {
-        let least_common_bits: String = self
-            .internal
+    fn get_least_common_bits(&self) -> String {
+        self.internal
             .keys()
             .into_iter()
             .map(|k| self.internal.get(k).unwrap().least_common_bit())
-            .collect();
-        i32::from_str_radix(least_common_bits.as_str(), 2).unwrap()
+            .collect()
+    }
+}
+
+struct DiagnosticReport {
+    input: Vec<String>,
+    bit_map: BitMap,
+}
+
+impl DiagnosticReport {
+    pub fn new(input: Vec<String>) -> DiagnosticReport {
+        let bit_map = BitMap::generate(&input);
+        DiagnosticReport { input, bit_map }
+    }
+
+    fn gamma_rate(&self) -> i32 {
+        i32::from_str_radix(self.bit_map.get_most_common_bits().as_str(), 2).unwrap()
+    }
+
+    fn epsilon_rate(&self) -> i32 {
+        i32::from_str_radix(self.bit_map.get_least_common_bits().as_str(), 2).unwrap()
     }
 }
 
 pub fn day03a(input: Vec<String>) -> i32 {
-    let bit_map = input.iter().fold(BitMap::default(), |mut acc, line| {
-        line.chars().enumerate().for_each(|(i, c)| {
-            let bit_count = acc.get_or_default(i);
-            bit_count.update_count(c);
-        });
-        acc
-    });
-    bit_map.gamma_rate() * bit_map.epsilon_rate()
+    let diagnostic_report = DiagnosticReport::new(input);
+    diagnostic_report.gamma_rate() * diagnostic_report.epsilon_rate()
 }
 
 pub fn day03b(input: Vec<String>) -> i32 {
