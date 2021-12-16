@@ -33,8 +33,8 @@ fn main() -> Result<()> {
 macro_rules! advent_run {
     ($year:expr, $day:expr, $utils:path) => {
         paste! {
-            let part1 = crate::[<year $year>]::[<day0 $day a>]($utils(format!("input/day0{}.txt", $day).as_str())?);
-            let part2 = crate::[<year $year>]::[<day0 $day b>]($utils(format!("input/day0{}.txt", $day).as_str())?);
+            let part1 = crate::[<year $year>]::[<day0 $day a>]($utils(format!("input/{}/day0{}.txt", $year, $day).as_str())?);
+            let part2 = crate::[<year $year>]::[<day0 $day b>]($utils(format!("input/{}/day0{}.txt", $year, $day).as_str())?);
             println!(
                 "Year {}, Day 0{}, Part 1: {}", $year, $day, part1
             );
