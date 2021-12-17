@@ -83,18 +83,12 @@ impl BitMap {
 struct DiagnosticReport {
     input: Vec<String>,
     bit_map: BitMap,
-    bit_length: usize,
 }
 
 impl DiagnosticReport {
     pub fn new(input: Vec<String>) -> DiagnosticReport {
         let bit_map = BitMap::generate(&input);
-        let bit_length = input.get(0).unwrap().len();
-        DiagnosticReport {
-            input,
-            bit_map,
-            bit_length,
-        }
+        DiagnosticReport { input, bit_map }
     }
 
     fn gamma_rate(&self) -> i32 {
