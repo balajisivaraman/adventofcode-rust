@@ -23,6 +23,9 @@ fn main() -> Result<()> {
         ("2021", "day03") => {
             advent_run!(2021, 3, utils::read_lines_as_str_vector);
         }
+        ("2021", "day04") => {
+            advent_run!(2021, 4, utils::read_lines_as_str_vector);
+        }
         (_, _) => println!("Unknown input"),
     }
 
