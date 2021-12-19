@@ -138,8 +138,29 @@ impl Bingo {
                 .find(|b| b.is_row_filled() || b.is_col_filled())
             {
                 return Ok(Score(matched_board.sum_unmarked_numbers() * num));
-            } else {
-                continue;
+            }
+        }
+        Err("No matching board found!!!".to_string())
+    }
+
+    fn play_octopus(&self) -> Result<Score, String> {
+        let mut marked_indexes: Vec<usize> = Vec::new();
+        for num in self.numbers_to_be_drawn.iter().cycle() {
+            self.boards.iter().for_each(|b| b.mark_number_as_seen(*num));
+            let matching_boards: Vec<(usize, &Board)> = self
+                .boards
+                .iter()
+                .enumerate()
+                .filter(|(i, b)| {
+                    !marked_indexes.contains(i) && (b.is_row_filled() || b.is_col_filled())
+                })
+                .collect();
+            for (i, _) in matching_boards {
+                marked_indexes.push(i);
+            }
+            if marked_indexes.len() == self.boards.len() {
+                let matched_board = self.boards.get(*marked_indexes.last().unwrap()).unwrap();
+                return Ok(Score(matched_board.sum_unmarked_numbers() * num));
             }
         }
         Err("No matching board found!!!".to_string())
@@ -151,8 +172,9 @@ pub fn day04a(input: Vec<String>) -> i32 {
     bingo.play().unwrap().0
 }
 
-pub fn day04b(_input: Vec<String>) -> i32 {
-    0
+pub fn day04b(input: Vec<String>) -> i32 {
+    let bingo = Bingo::new(input);
+    bingo.play_octopus().unwrap().0
 }
 
 #[cfg(test)]
@@ -185,6 +207,35 @@ mod tests {
         assert_eq!(
             day04a(input.into_iter().map(|s| s.to_string()).collect()),
             4512
+        );
+    }
+
+    #[test]
+    fn test_day04b() {
+        let input = vec![
+            "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1",
+            "",
+            "22 13 17 11  0",
+            " 8  2 23  4 24",
+            "21  9 14 16  7",
+            " 6 10  3 18  5",
+            " 1 12 20 15 19",
+            "",
+            " 3 15  0  2 22",
+            " 9 18 13 17  5",
+            "19  8  7 25 23",
+            "20 11 10 24  4",
+            "14 21 16 12  6",
+            "",
+            "14 21 17 24  4",
+            "10 16 15  9 19",
+            "18  8 23 26 20",
+            "22 11 13  6  5",
+            " 2  0 12  3  7",
+        ];
+        assert_eq!(
+            day04b(input.into_iter().map(|s| s.to_string()).collect()),
+            1924
         );
     }
 }
