@@ -70,7 +70,33 @@ impl Line {
                     .collect::<Vec<Point>>();
             }
         }
-        unimplemented!("");
+        if self.e1.x < self.e2.x {
+            if self.e1.y < self.e2.y {
+                return ((self.e1.x)..=(self.e2.x))
+                    .zip(self.e1.y..=(self.e2.y))
+                    .map(|(x, y)| Point { x, y })
+                    .collect::<Vec<Point>>();
+            } else {
+                return ((self.e1.x)..=(self.e2.x))
+                    .zip((self.e2.y..=(self.e1.y)).rev())
+                    .map(|(x, y)| Point { x, y })
+                    .collect::<Vec<Point>>();
+            }
+        } else {
+            if self.e1.y < self.e2.y {
+                return ((self.e2.x)..=(self.e1.x))
+                    .rev()
+                    .zip(self.e1.y..=(self.e2.y))
+                    .map(|(x, y)| Point { x, y })
+                    .collect::<Vec<Point>>();
+            } else {
+                return ((self.e2.x)..=(self.e1.x))
+                    .rev()
+                    .zip((self.e2.y..=(self.e1.y)).rev())
+                    .map(|(x, y)| Point { x, y })
+                    .collect::<Vec<Point>>();
+            }
+        }
     }
 }
 
@@ -101,6 +127,19 @@ impl VentLines {
             });
         point_overlaps.values().filter(|c| **c >= 2).count() as i32
     }
+
+    fn find_max_overlapping_points_with_diagonals(&self) -> i32 {
+        let mut point_overlaps: HashMap<Point, i32> = HashMap::new();
+        self.vents.iter().flat_map(|v| v.points()).for_each(|p| {
+            if point_overlaps.contains_key(&p) {
+                let new_count = *point_overlaps.get_mut(&p).unwrap() + 1;
+                point_overlaps.insert(p, new_count);
+            } else {
+                point_overlaps.insert(p, 1);
+            }
+        });
+        point_overlaps.values().filter(|c| **c >= 2).count() as i32
+    }
 }
 
 pub fn day05a(input: Vec<String>) -> i32 {
@@ -108,8 +147,9 @@ pub fn day05a(input: Vec<String>) -> i32 {
     vent_lines.find_max_overlapping_points()
 }
 
-pub fn day05b(_input: Vec<String>) -> i32 {
-    0
+pub fn day05b(input: Vec<String>) -> i32 {
+    let vent_lines = VentLines::new(input);
+    vent_lines.find_max_overlapping_points_with_diagonals()
 }
 
 #[cfg(test)]
@@ -133,6 +173,26 @@ mod tests {
         assert_eq!(
             day05a(input.into_iter().map(|l| l.to_string()).collect()),
             5
+        );
+    }
+
+    #[test]
+    fn test_day05b() {
+        let input = vec![
+            "0,9 -> 5,9",
+            "8,0 -> 0,8",
+            "9,4 -> 3,4",
+            "2,2 -> 2,1",
+            "7,0 -> 7,4",
+            "6,4 -> 2,0",
+            "0,9 -> 2,9",
+            "3,4 -> 1,4",
+            "0,0 -> 8,8",
+            "5,5 -> 8,2",
+        ];
+        assert_eq!(
+            day05b(input.into_iter().map(|l| l.to_string()).collect()),
+            12
         );
     }
 }
