@@ -100,10 +100,7 @@ impl Board {
     }
 }
 
-struct BingoResult<'a> {
-    matched_board: &'a Board,
-    matching_number: &'a i32,
-}
+struct Score(i32);
 
 #[derive(Debug)]
 struct Bingo {
@@ -132,7 +129,7 @@ impl Bingo {
         }
     }
 
-    fn play(&self) -> Result<BingoResult<'_>, String> {
+    fn play(&self) -> Result<Score, String> {
         for num in self.numbers_to_be_drawn.iter() {
             self.boards.iter().for_each(|b| b.mark_number_as_seen(*num));
             if let Some(matched_board) = self
@@ -140,10 +137,7 @@ impl Bingo {
                 .iter()
                 .find(|b| b.is_row_filled() || b.is_col_filled())
             {
-                return Ok(BingoResult {
-                    matched_board,
-                    matching_number: num,
-                });
+                return Ok(Score(matched_board.sum_unmarked_numbers() * num));
             } else {
                 continue;
             }
@@ -154,8 +148,7 @@ impl Bingo {
 
 pub fn day04a(input: Vec<String>) -> i32 {
     let bingo = Bingo::new(input);
-    let bingo_result = bingo.play().unwrap();
-    bingo_result.matched_board.sum_unmarked_numbers() * bingo_result.matching_number
+    bingo.play().unwrap().0
 }
 
 pub fn day04b(_input: Vec<String>) -> i32 {
