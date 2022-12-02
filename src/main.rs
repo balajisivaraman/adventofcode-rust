@@ -8,6 +8,7 @@ use std::env;
 
 mod utils;
 mod year2021;
+mod year2022;
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -28,6 +29,9 @@ fn main() -> Result<()> {
         }
         ("2021", "day05") => {
             advent_run!(2021, 5, utils::read_lines_as_str_vector);
+        }
+        ("2022", "day01") => {
+            advent_run!(2022, 1, utils::read_lines_as_str_vector);
         }
         (_, _) => println!("Unknown input"),
     }
